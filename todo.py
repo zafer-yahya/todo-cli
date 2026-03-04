@@ -1,8 +1,10 @@
 import json
 import os
 from datetime import datetime
+from colorama import Fore, Style, init
 
-# Dosya adı
+init(autoreset=True)  # Renkleri otomatik sıfırlar
+
 TASKS_FILE = "tasks.json"
 
 def load_tasks():
@@ -21,7 +23,7 @@ def save_tasks(tasks):
 def add_task(tasks):
     description = input("Yapılacak iş nedir? ").strip()
     if not description:
-        print("Boş görev eklenemez.")
+        print(f"{Fore.YELLOW}Boş görev eklenemez.{Style.RESET_ALL}")
         return
     
     task = {
@@ -30,16 +32,16 @@ def add_task(tasks):
         "created": datetime.now().strftime("%Y-%m-%d %H:%M")
     }
     tasks.append(task)
-    print(f"✓ Eklendi: {description}")
+    print(f"{Fore.GREEN}✓ Eklendi: {description}{Style.RESET_ALL}")
 
 def list_tasks(tasks):
     if not tasks:
-        print("Henüz görev yok.")
+        print(f"{Fore.YELLOW}Henüz görev yok.{Style.RESET_ALL}")
         return
     
-    print("\nGörev Listesi:")
+    print(f"\n{Fore.CYAN}Görev Listesi:{Style.RESET_ALL}")
     for i, task in enumerate(tasks, 1):
-        status = "✓" if task["done"] else " "
+        status = f"{Fore.GREEN}✓{Style.RESET_ALL}" if task["done"] else f"{Fore.RED}✗{Style.RESET_ALL}"
         print(f"{i}. [{status}] {task['description']}  ({task['created']})")
 
 def complete_task(tasks):
@@ -48,14 +50,14 @@ def complete_task(tasks):
         return
     
     try:
-        num = int(input("\nTamamlanan görevin numarası: "))
+        num = int(input(f"\n{Fore.CYAN}Tamamlanan görevin numarası: {Style.RESET_ALL}"))
         if 1 <= num <= len(tasks):
             tasks[num-1]["done"] = True
-            print("✓ Görev tamamlandı!")
+            print(f"{Fore.GREEN}✓ Görev tamamlandı!{Style.RESET_ALL}")
         else:
-            print("Geçersiz numara.")
+            print(f"{Fore.RED}Geçersiz numara.{Style.RESET_ALL}")
     except:
-        print("Lütfen sayı gir.")
+        print(f"{Fore.RED}Lütfen sayı gir.{Style.RESET_ALL}")
 
 def delete_task(tasks):
     list_tasks(tasks)
@@ -63,29 +65,29 @@ def delete_task(tasks):
         return
     
     try:
-        num = int(input("\nSilinecek görevin numarası: "))
+        num = int(input(f"\n{Fore.CYAN}Silinecek görevin numarası: {Style.RESET_ALL}"))
         if 1 <= num <= len(tasks):
             removed = tasks.pop(num-1)
-            print(f"🗑 Silindi: {removed['description']}")
+            print(f"{Fore.RED}🗑 Silindi: {removed['description']}{Style.RESET_ALL}")
         else:
-            print("Geçersiz numara.")
+            print(f"{Fore.RED}Geçersiz numara.{Style.RESET_ALL}")
     except:
-        print("Lütfen sayı gir.")
+        print(f"{Fore.RED}Lütfen sayı gir.{Style.RESET_ALL}")
 
 def main():
     tasks = load_tasks()
     
     while True:
-        print("\n" + "="*40)
-        print("  TO-DO UYGULAMASI")
-        print("="*40)
+        print(f"\n{Fore.CYAN}" + "="*40)
+        print(f"{Fore.CYAN}  TO-DO UYGULAMASI")
+        print(f"{Fore.CYAN}" + "="*40)
         print("1. Görev ekle")
         print("2. Görevleri listele")
         print("3. Görevi tamamla")
         print("4. Görev sil")
         print("5. Çıkış")
         
-        choice = input("\nSeçiminiz (1-5): ").strip()
+        choice = input(f"\n{Fore.YELLOW}Seçiminiz (1-5): {Style.RESET_ALL}").strip()
         
         if choice == "1":
             add_task(tasks)
@@ -97,13 +99,12 @@ def main():
             delete_task(tasks)
         elif choice == "5":
             save_tasks(tasks)
-            print("\nGörüşürüz! Görevleriniz kaydedildi.")
+            print(f"\n{Fore.GREEN}Görüşürüz! Görevleriniz kaydedildi.{Style.RESET_ALL}")
             break
         else:
-            print("Geçersiz seçim, 1-5 arası bir sayı girin.")
+            print(f"{Fore.RED}Geçersiz seçim, 1-5 arası bir sayı girin.{Style.RESET_ALL}")
         
-        # Her işlemden sonra kaydet (güvenli olsun)
-        save_tasks(tasks)
+        save_tasks(tasks)  # Her işlemden sonra kaydet
 
 if __name__ == "__main__":
     main()
